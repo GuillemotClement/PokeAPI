@@ -30,16 +30,26 @@ func StartRepl() {
 		commandName := words[0]
 
 		// on viens checked si la commande existe dans le registry des commandes
+		// getCommande() permet de retourner le registry de commande
+		// [commandName] => on accede a la valeur de cette map avec la cle commandMap
+		// en gros, les crochet permet de selectionner la cle que l'on souhaite
+
+		// command => contient la valeur associer a la cle du map OU ou la valeur zero si existe pas ("", 0, false, nil, ..)
+		// exists => contient un boolean qui indique si la cle existe reelement dans le map
 		command, exists := getCommands()[commandName]
 		// si la commande existe bien
 		if exists {
 			// permet de gerer l'erreur de la fonction callback
+			// on execute la commande vu qu'elle existe dans mon map
 			err := command.callback()
+			// gestion d'erreur retourner par la callback
 			if err != nil {
 				fmt.Println(err)
 			}
+			// on retourne faire une iteration => on redemande un nouvel input
 			continue
 		} else {
+			// sinon si la cle existe pas on affiche un message et on redemande une commande
 			fmt.Println("Unknow command")
 			continue
 		}
@@ -55,13 +65,17 @@ func CleanInput(text string) []string {
 	return words
 }
 
+// definis le typage pour les commande
 type cliCommand struct {
 	name        string
 	description string
 	callback    func() error
 }
 
+// fonction qui permet de definir le registry de commande
 func getCommands() map[string]cliCommand {
+	// on retourne le map lors de l'appel de la fonction
+	// on type avec le struct => chaque commande doit correspondre au struct
 	return map[string]cliCommand{
 		"help": {
 			name:        "help",
